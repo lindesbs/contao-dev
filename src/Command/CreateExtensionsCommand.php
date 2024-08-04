@@ -4,6 +4,7 @@ namespace lindesbs\ContaoDev\Command;
 
 
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\System;
 use Doctrine\DBAL\Connection;
 use lindesbs\ContaoDev\Service\Config;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,6 +27,8 @@ class CreateExtensionsCommand extends Command
     )
     {
         parent::__construct();
+
+        $this->framework->initialize();
     }
 
     protected function configure(): void
@@ -48,6 +51,12 @@ class CreateExtensionsCommand extends Command
         $io->writeln("Use skeleton version <options=bold>{$input->getArgument('version')}</>");
         $io->writeln("namespace <options=bold>{$input->getArgument('namespace')}</>");
 
+        $this->config->config->name = $input->getArgument('namespace');
+        dump($this->config->getConfig());
+
+
+        $rootDir = System::getContainer()->getParameter('kernel.project_dir');
+        dump($this->config->combinePaths([$rootDir, $this->config->getConfig()->rootDevDir, $input->getArgument('namespace')]));
 
 
         return Command::SUCCESS;
